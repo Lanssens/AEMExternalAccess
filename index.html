@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="JS/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<form>
+
+</form>
+
+<script>
+var loadAdaptiveForm = function() {
+
+  if(options.path) {
+      console.log(options.path);
+      // options.path refers to the publish URL of the adaptive form
+      // For Example: http:myserver:4503/content/forms/af/ABC, where ABC is the adaptive form
+      // Note: If AEM server is running on a context path, the adaptive form URL must contain the context path
+      var path = options.path;
+      path += "/jcr:content/guideContainer.html";
+      $.ajax({
+          url  : path ,
+          type : "GET",
+          data : {
+              // Set the wcmmode to be disabled
+              wcmmode : "disabled",
+              // Set the data reference, if any
+              "dataRef": options.dataRef,
+              // Specify a different theme for the form object
+              "themeOverride" : options.themePath
+          },
+          async: false,
+          success: function (data) {
+              // If jquery is loaded, set the inner html of the container
+              // If jquery is not loaded, use APIs provided by document to set the inner HTML but these APIs would not evaluate the script tag in HTML as per the HTML5 spec
+              // For example: document.getElementById().innerHTML
+              if(window.$ && options.CSS_Selector){
+                  // HTML API of jquery extracts the tags, updates the DOM, and evaluates the code embedded in the script tag.
+                  $(options.CSS_Selector).html(data);
+              }
+          },
+          error: function (data) {
+              // any error handler
+          }
+      });
+  } else {
+      if (typeof(console) !== "undefined") {
+          console.log("Path of Adaptive Form not specified to loadAdaptiveForm");
+      }
+  }
+};
+
+var options =  {
+    path: "http://localhost:4503/content/forms/af/vlaamse-overheid/qewewq/testformulier",
+    dataRef: "",
+    themePath: "",
+    CSS_Selector: ""
+};
+
+window.onload = loadAdaptiveForm(options);
+
+</script>
+
+</body>
+</html>
